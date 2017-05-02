@@ -5,8 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Immersion_VR_Agent"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Immersion VR Agent App" Height="255.647" Width="238.298" ResizeMode="NoResize" Icon="icon.png">
     <Grid>
-        
+        <Image x:Name="logo_2x_png" Margin="0,40,0,0" Source="logo@2x.png" Stretch="Fill" Height="32" VerticalAlignment="Top" HorizontalAlignment="Center" Width="170" RenderOptions.BitmapScalingMode="Fant"/>
+        <Button x:Name="runButton" Content="Spustit Immersion VR" Margin="12,87,12,0" VerticalAlignment="Top" Height="39" Foreground="White" BorderBrush="{x:Null}" Background="#FF323232" FontWeight="Bold" BorderThickness="0"/>
+        <Grid Margin="12,0,12,10" Background="#FFF0F0F0" Height="70" VerticalAlignment="Bottom">
+            <Image x:Name="statusIcon" Margin="0,7" Source="openvr@2x.png" Stretch="Fill" Width="42" Height="41" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5" RenderOptions.BitmapScalingMode="Fant"/>
+            <Label x:Name="statusLabel" Content="Inicializace..." HorizontalAlignment="Left" Margin="47,13,-2,32" VerticalAlignment="Center" Width="163" Foreground="#FF1D1D1D" Height="25"/>
+            <Label x:Name="statusDescription" Content="Čekejte, prosím..." HorizontalAlignment="Left" Margin="47,30,0,0" VerticalAlignment="Center" Width="161" Foreground="#FF1D1D1D" Height="40" FontSize="10"/>
+        </Grid>
+        <Button x:Name="button1" Margin="0,4,4,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" HorizontalAlignment="Right" Width="26" Height="26" VerticalAlignment="Top">
+            <Image x:Name="settings_png" Source="settings.png" Stretch="Fill" Height="32" VerticalAlignment="Center" Width="32" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="Fant"/>
+        </Button>
+
     </Grid>
 </Window>
