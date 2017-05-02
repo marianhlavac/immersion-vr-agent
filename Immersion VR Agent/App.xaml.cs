@@ -5,11 +5,15 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Valve.VR;
 
 namespace Immersion_VR_Agent {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
+        private void Application_Exit(object sender, ExitEventArgs e) {
+            OpenVR.Shutdown();
+        }
     }
 }
