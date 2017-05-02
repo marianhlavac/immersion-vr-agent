@@ -14,56 +14,75 @@ namespace Immersion_VR_Agent {
             WorkerReportsProgress = true,
             WorkerSupportsCancellation = true
         };
-        private CVRSystem vrSystem;
+        private bool isRunning = false;
+        private Agent agent = new Agent();
 
         public MainWindow() {
             InitializeComponent();
-
-            if (InitializeOpenVR()) {
-                statusIcon.Source = Utils.LoadBitmapFromResource("openvr-good@2x.png");
-                statusLabel.Content = "Připraveno.";
-                statusDescription.Content = "Ve fázi výuky";
-            } else {
-                statusIcon.Source = Utils.LoadBitmapFromResource("openvr-error@2x.png");
-                statusLabel.Content = "Chyba!";
-                statusDescription.Content = "Nepodařilo se inicializovat \nOpenVR.";
-            }
-
-            StartUpdating();
         }
 
-        public bool InitializeOpenVR() {
-            EVRInitError initError = EVRInitError.None;
-            vrSystem = OpenVR.Init(ref initError, EVRApplicationType.VRApplication_Background);
+        public void UISetStatus(string icon, string title, string description) {
+            statusIcon.Source = Utils.LoadBitmapFromResource(icon);
+            statusLabel.Content = title;
+            statusDescription.Content = description;
+        }
 
-            if (initError == EVRInitError.None) {
-                worker.DoWork += worker_DoWork;
-                worker.ProgressChanged += worker_OnProgressChanged;
-                return true;
+        public void Start() {
+            UISetStatus("openvr@2x.png", "Inicializace...", "Čekejte prosím...");
+            InvalidateVisual();
+
+            if (agent.InitializeOpenVR()) {
+                UISetStatus("openvr-good@2x.png", "Připraveno", "");
+                runButton.IsEnabled = false;
+                runButton.Opacity = 0;
+                isRunning = true;
+
+                StartUpdating();
             }
             else {
-                return false;
+                UISetStatus("openvr-error@2x.png", "Chyba!", "Nepodařilo se inicializovat \nOpenVR.");
             }
         }
 
         public void StartUpdating() {
+            worker.DoWork += worker_DoWork;
+            worker.ProgressChanged += worker_OnProgressChanged;
             worker.RunWorkerAsync();
         }
 
         private void worker_DoWork(object sender, DoWorkEventArgs e) {
             BackgroundWorker worker = (BackgroundWorker)sender;
             while (!worker.CancellationPending) {
-                VREvent_t vrevent = new VREvent_t();
-                if (vrSystem.PollNextEvent(ref vrevent, (uint)Marshal.SizeOf(typeof(VREvent_t)))) {
-                    worker.ReportProgress(0, vrevent);
+                if (agent.PollEvents()) {
+                    worker.ReportProgress(0, "");
                 }
             }
         }
 
         private void worker_OnProgressChanged(object sender, ProgressChangedEventArgs e) {
-            VREvent_t vrevent = (VREvent_t) e.UserState;
-            if (vrevent.eventType != 0) {
-                Console.WriteLine("Polled: " + vrevent.eventType.ToString());
+            switch (agent.status) {
+                case AgentStatus.Ready:
+                    UISetStatus("openvr-good@2x.png", "Připraveno", "");
+                    break;
+
+                case AgentStatus.AppRunning:
+                    UISetStatus("openvr-good@2x.png", "Spuštěná aplikace", agent.GetRunningAppName());
+                    break;
+
+                case AgentStatus.Quitting:
+                    UISetStatus("openvr@2x.png", "Ukončeno", "Znovu spusťte OpenVR.");
+                    isRunning = false;
+                    runButton.IsEnabled = true;
+                    runButton.Opacity = 1;
+                    break;
+            }
+        }
+
+        private void runButton_Click(object sender, RoutedEventArgs e) {
+            if (isRunning) {
+
+            } else {
+                Start();
             }
         }
     }
