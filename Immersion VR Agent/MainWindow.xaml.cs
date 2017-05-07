@@ -16,6 +16,7 @@ namespace Immersion_VR_Agent {
         };
         private bool isRunning = false;
         private Agent agent = new Agent();
+        private string executablePath = "ImmersionVR.exe";
 
         public MainWindow() {
             InitializeComponent();
@@ -84,6 +85,15 @@ namespace Immersion_VR_Agent {
             } else {
                 Start();
             }
+        }
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e) {
+            Settings settingsWindow = new Immersion_VR_Agent.Settings();
+
+            settingsWindow.path.Text = executablePath;
+            settingsWindow.ShowDialog();
+
+            Console.WriteLine(settingsWindow.path.Text);
         }
     }
 }

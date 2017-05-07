@@ -16,7 +16,7 @@
             <Label x:Name="statusLabel" Content="Neaktivní." HorizontalAlignment="Left" Margin="47,13,-2,32" VerticalAlignment="Center" Width="163" Foreground="#FF1D1D1D" Height="25"/>
             <Label x:Name="statusDescription" Content="Spusťte Immersion VR." HorizontalAlignment="Left" Margin="47,30,0,0" VerticalAlignment="Center" Width="161" Foreground="#FF1D1D1D" Height="40" FontSize="10"/>
         </Grid>
-        <Button x:Name="settingsButton" Margin="0,4,4,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" HorizontalAlignment="Right" Width="26" Height="26" VerticalAlignment="Top">
+        <Button x:Name="settingsButton" Margin="0,4,4,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" HorizontalAlignment="Right" Width="26" Height="26" VerticalAlignment="Top" Click="settingsButton_Click">
             <Image x:Name="settings_png" Source="settings.png" Stretch="Fill" Height="32" VerticalAlignment="Center" Width="32" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="Fant"/>
         </Button>
 
