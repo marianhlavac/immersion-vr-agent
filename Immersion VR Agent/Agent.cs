@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Valve.VR;
+using System.Diagnostics;
 
 namespace Immersion_VR_Agent {
 
@@ -15,7 +16,13 @@ namespace Immersion_VR_Agent {
     class Agent {
         private CVRSystem vrSystem;
         private uint currentPid = 0;
+        private int launcherPid = 0;
+        private string launcherExecutablePath;
         public AgentStatus status;
+
+        public Agent(string executablePath) {
+            launcherExecutablePath = executablePath;
+        }
 
         public bool InitializeOpenVR() {
             EVRInitError initError = EVRInitError.None;
@@ -45,13 +52,12 @@ namespace Immersion_VR_Agent {
         }
 
         public void OnVRApplicationChange(uint appPid) {
+            Console.WriteLine(appPid);
             if (appPid > 0) {
-                Console.WriteLine("Some app is running now.");
                 currentPid = appPid;
                 status = AgentStatus.AppRunning;
-            } else {
-                Console.WriteLine("The app has been closed. Now it's time to run our launcher.");
-                status = AgentStatus.Ready;
+            } else if (currentPid != launcherPid) {
+                RunImmersionVR();
             }
         }
 
@@ -66,6 +72,26 @@ namespace Immersion_VR_Agent {
             } else {
                 return "<none>";
             }
+        }
+
+        public int? RunImmersionVR(bool tutorial = false) {
+            try {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = launcherExecutablePath;
+                startInfo.Arguments = tutorial ? "" : "-launcher";
+                Process proc = Process.Start(startInfo);
+
+                status = tutorial ? AgentStatus.InTutorial : AgentStatus.InLauncher;
+                launcherPid = proc.Id;
+
+                return proc.Id;
+            } catch {
+                return null;
+            }
+        }
+
+        public void ChangeExecutablePath(string executablePath) {
+            launcherExecutablePath = executablePath;
         }
     }
 }

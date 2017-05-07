@@ -15,8 +15,8 @@ namespace Immersion_VR_Agent {
             WorkerSupportsCancellation = true
         };
         private bool isRunning = false;
-        private Agent agent = new Agent();
         private string executablePath = "ImmersionVR.exe";
+        private Agent agent = new Agent("ImmersionVR.exe");
 
         public MainWindow() {
             InitializeComponent();
@@ -29,19 +29,25 @@ namespace Immersion_VR_Agent {
         }
 
         public void Start() {
-            UISetStatus("openvr@2x.png", "Inicializace...", "Čekejte prosím...");
             InvalidateVisual();
 
             if (agent.InitializeOpenVR()) {
-                UISetStatus("openvr-good@2x.png", "Připraveno", "");
-                runButton.IsEnabled = false;
-                runButton.Opacity = 0;
-                isRunning = true;
 
-                StartUpdating();
+                int? pid = agent.RunImmersionVR(true);
+
+                if (pid == null) {
+                    UISetStatus("openvr-error@2x.png", "Chyba!", "Nepodařilo se spustit \nImmersion VR.");
+                    InvalidateVisual();
+                } else {
+                    StartUpdating();
+                    isRunning = true;
+                    runButton.IsEnabled = false;
+                    runButton.Opacity = 0;
+                }
             }
             else {
                 UISetStatus("openvr-error@2x.png", "Chyba!", "Nepodařilo se inicializovat \nOpenVR.");
+                InvalidateVisual();
             }
         }
 
@@ -92,8 +98,8 @@ namespace Immersion_VR_Agent {
 
             settingsWindow.path.Text = executablePath;
             settingsWindow.ShowDialog();
-
-            Console.WriteLine(settingsWindow.path.Text);
+            executablePath = settingsWindow.path.Text;
+            agent.ChangeExecutablePath(settingsWindow.path.Text);
         }
     }
 }
